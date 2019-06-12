@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:calculator/algorithm/calculate.dart';
+import 'package:calculator/algorithm/calculator.dart';
 import 'package:flutter/foundation.dart';
 import '../signs.dart';
 
@@ -18,15 +18,15 @@ class OperandsError<T> implements Exception {
   }
 }
 
-class SicenceCalculate extends Calculate<double> {
-  final _numberRegExp = RegExp(r'^-?(([0-9]+(\.[0-9]+)?)|π|e)');
-  final _operatorRegExp = RegExp(_genOpRegx([
+class ScienceCalculator extends Calculator<double> {
+  final _numberPattern = r'(([0-9]+(\.[0-9]+)?)|π|e)';
+  static final _operatorPattern = genOpRegx([
     PLUS_SIGN,
     MINUS_SIGN,
     MULTIPLICATION_SIGN,
     DIVISION_SIGN,
     POWER_SIGN,
-    SQUARE_ROOT_OP,
+    SQUARE_ROOT_SIGN,
     LG_SIGN,
     LN_SIGN,
     MODULAR_SIGN,
@@ -36,7 +36,7 @@ class SicenceCalculate extends Calculate<double> {
     LEFT_QUOTE_SIGN,
     RIGHT_QUOTE_SIGN,
     BOUNDARY_SIGN,
-  ]));
+  ]);
   static final _level1 = 'level1';
   static final _level2 = 'level2';
   static final _level3 = 'level3';
@@ -46,7 +46,7 @@ class SicenceCalculate extends Calculate<double> {
     MULTIPLICATION_SIGN: 2,
     DIVISION_SIGN: 3,
     POWER_SIGN: 4,
-    SQUARE_ROOT_OP: 5,
+    SQUARE_ROOT_SIGN: 5,
     LG_SIGN: 6,
     LN_SIGN: 7,
     MODULAR_SIGN: 8,
@@ -73,33 +73,107 @@ class SicenceCalculate extends Calculate<double> {
     BOUNDARY_SIGN: [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 3]
   };
 
-// the function that generate regular expression to match operator in the begining of calculation string
-  static String _genOpRegx(List<String> operators) {
-    var regx = r'^(';
-    operators.asMap().forEach((i, o) {
-      if (o.length > 1) {
-        regx += ('(' + o + ')');
-      } else if (o.length == 1) {
-        regx += (r'\' + o);
-      }
-      if (i < operators.length - 1) {
-        regx += '|';
-      }
-    });
-    regx += r')';
-    return regx;
-  }
-
   @override
   @protected
   String preProcess(String s) {
     final blankReg = RegExp(r'\s.*?');
     // remove all of the blank
     s = s.replaceAll(blankReg, '');
-    // replace all of the 'a-b' to 'a+-b' to match minus number.
+    // replace all of the 'a-b' or (xxx)-b to 'a+-b' or (xxx)+-b to match minus number.
     final regExp =
-        RegExp(r'(?<=([0-9]+(\.[0-9]+)?)|π|e)-(?=([0-9]+(\.[0-9]+)?)|π|e)');
+        RegExp(r'(?<=([0-9]+(\.[0-9]+)?)|π|e|\))-(?=([0-9]+(\.[0-9]+)?)|π|e)');
     return s.replaceAll(regExp, '+-');
+  }
+
+  @override
+  @protected
+  bool firstIsOperator(String s) {
+    final numberRegExp = RegExp("^-?$_numberPattern");
+    return !numberRegExp.hasMatch(s);
+  }
+
+  @override
+  bool lastIsOperator(String s) {
+    return RegExp(_operatorPattern + r'$').hasMatch(s);
+  }
+
+  Operand<double> _readOperand(String s) {
+    var operand;
+    switch (s) {
+      case 'π':
+        operand = pi;
+        break;
+      case '-π':
+        operand = -pi;
+        break;
+      case 'e':
+        operand = e;
+        break;
+      case '-e':
+        operand = -e;
+        break;
+      default:
+        operand = double.parse(s);
+    }
+    return Operand(operand, s.length);
+  }
+
+  @override
+  @protected
+  Operand<double> readFirstOperand(String s) {
+    final numberRegExp = RegExp("^-?$_numberPattern");
+    final matched = numberRegExp.firstMatch(s).group(0);
+    return _readOperand(matched);
+  }
+
+  @override
+  Operand<double> readLastOperand(String s) {
+    final numberRegExp = RegExp(_numberPattern + r'$');
+    final matched = numberRegExp.firstMatch(s).group(0);
+    return _readOperand(matched);
+  }
+
+  Operator _readOperator(String op) {
+    var operandsNum = 0;
+    switch (op) {
+      case PLUS_SIGN:
+      case MINUS_SIGN:
+      case MULTIPLICATION_SIGN:
+      case DIVISION_SIGN:
+      case POWER_SIGN:
+      case MODULAR_SIGN:
+        operandsNum = 2;
+        break;
+      case SQUARE_ROOT_SIGN:
+      case LG_SIGN:
+      case LN_SIGN:
+      case SIN_SIGN:
+      case COS_SIGN:
+      case TAN_SIGN:
+        operandsNum = 1;
+        break;
+      case LEFT_QUOTE_SIGN:
+      case RIGHT_QUOTE_SIGN:
+      case BOUNDARY_SIGN:
+        operandsNum = 0;
+        break;
+    }
+    return Operator(op, operandsNum);
+  }
+
+  @override
+  @protected
+  Operator readFirstOperator(String s) {
+    final operatorRegExp = RegExp("^$_operatorPattern");
+    final op = operatorRegExp.firstMatch(s).group(0);
+    return _readOperator(op);
+  }
+
+  @override
+  Operator readLastOperator(String s) {
+    final operatorRegExp = RegExp(_operatorPattern + r'$');
+    final op = operatorRegExp.firstMatch(s).group(0);
+    return _readOperator(op);
   }
 
   @override
@@ -117,7 +191,7 @@ class SicenceCalculate extends Calculate<double> {
         key = _level2;
         break;
       case POWER_SIGN:
-      case SQUARE_ROOT_OP:
+      case SQUARE_ROOT_SIGN:
       case LG_SIGN:
       case LN_SIGN:
       case SIN_SIGN:
@@ -158,7 +232,7 @@ class SicenceCalculate extends Calculate<double> {
         return pow(operands[0], operands[1]);
       case MODULAR_SIGN:
         return operands[0] % operands[1];
-      case SQUARE_ROOT_OP:
+      case SQUARE_ROOT_SIGN:
         return sqrt(operands[0]);
       case LG_SIGN:
         return log(operands[0]) / ln10;
@@ -175,63 +249,7 @@ class SicenceCalculate extends Calculate<double> {
   }
 
   @override
-  @protected
-  bool isOperator(String s) {
-    return !_numberRegExp.hasMatch(s);
-  }
-
-  @override
-  @protected
-  Operand<double> readOperand(String s) {
-    final matched = _numberRegExp.firstMatch(s).group(0);
-    var operand;
-    switch (matched) {
-      case 'π':
-        operand = pi;
-        break;
-      case '-π':
-        operand = -pi;
-        break;
-      case 'e':
-        operand = e;
-        break;
-      case '-e':
-        operand = -e;
-        break;
-      default:
-        operand = double.parse(matched);
-    }
-    return Operand(operand, matched.length);
-  }
-
-  @override
-  @protected
-  Operator readOperator(String s) {
-    final op = _operatorRegExp.firstMatch(s).group(0);
-    var operandsNum = 0;
-    switch (op) {
-      case PLUS_SIGN:
-      case MINUS_SIGN:
-      case MULTIPLICATION_SIGN:
-      case DIVISION_SIGN:
-      case POWER_SIGN:
-      case MODULAR_SIGN:
-        operandsNum = 2;
-        break;
-      case SQUARE_ROOT_OP:
-      case LG_SIGN:
-      case LN_SIGN:
-      case SIN_SIGN:
-      case COS_SIGN:
-      case TAN_SIGN:
-        operandsNum = 1;
-        break;
-      case LEFT_QUOTE_SIGN:
-      case RIGHT_QUOTE_SIGN:
-      case BOUNDARY_SIGN:
-        operandsNum = 0;
-        break;
-    }
-    return Operator(op, operandsNum);
+  String formatResult(double result) {
+    return result.toString().replaceAll(RegExp(r'\.0*$'), '');
   }
 }

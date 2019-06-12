@@ -1,6 +1,6 @@
-import 'package:calculator/algorithm/calculate.dart';
+import 'package:calculator/algorithm/calculator.dart';
 
-class LogicalCalculate extends Calculate {
+class LogicalCalculator extends Calculator {
   @override
   PCompare compare(Operator op1, Operator op2) {
     return null;
@@ -12,17 +12,35 @@ class LogicalCalculate extends Calculate {
   }
 
   @override
-  bool isOperator(String s) {
+  bool firstIsOperator(String s) {
     return null;
   }
 
   @override
-  readOperand(String s) {
+  bool lastIsOperator(String s) {
+    // TODO: implement isOperator
     return null;
   }
 
   @override
-  Operator readOperator(String s) {
+  readFirstOperand(String s) {
+    return null;
+  }
+
+  @override
+  Operator readFirstOperator(String s) {
+    return null;
+  }
+
+  @override
+  Operand readLastOperand(String s) {
+    // TODO: implement readLastOperand
+    return null;
+  }
+
+  @override
+  Operator readLastOperator(String s) {
+    // TODO: implement readLastOperator
     return null;
   }
 }

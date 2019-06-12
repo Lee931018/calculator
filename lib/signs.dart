@@ -4,7 +4,7 @@ const MULTIPLICATION_SIGN = '×';
 const DIVISION_SIGN = '÷';
 const DECIMAL_POINT_SIGN = '.';
 const POWER_SIGN = '^';
-const SQUARE_ROOT_OP = '√';
+const SQUARE_ROOT_SIGN = '√';
 const LG_SIGN = 'lg';
 const LN_SIGN = 'ln';
 const MODULAR_SIGN = '%';
@@ -23,3 +23,5 @@ const DELETE_SIGN = '←';
 const PIE = 'π';
 const E_NUM = 'e';
 const BOUNDARY_SIGN = '#';
+
+const CALCULATE_ERROR = 'Error';

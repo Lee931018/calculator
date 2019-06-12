@@ -12,7 +12,9 @@ class CalculationInputError implements Exception {
   @override
   String toString() {
     String errorMsg;
-    if (_op1.name == BOUNDARY_SIGN) {
+    if (_op1 == null || _op2 == null) {
+      errorMsg = 'there are some input error!';
+    } else if (_op1.name == BOUNDARY_SIGN) {
       if (_op2.name == ')') {
         errorMsg = "missing (";
       }
@@ -46,7 +48,7 @@ class Operand<T> {
   Operand(this.operand, this.length);
 }
 
-abstract class Calculate<T> {
+abstract class Calculator<T> {
 // the stack which store the operators from calculation string
   final _operators = ListQueue<Operator>();
 // the stack which store the oparands from calculation string
@@ -60,17 +62,25 @@ abstract class Calculate<T> {
     return s;
   }
 
-// return if the next element in calculation string is operator
+// return if the first element in calculation string is operator
   @protected
-  bool isOperator(String s);
+  bool firstIsOperator(String s);
 
-// read the next operator from calculation strings
+// return if s is operator
+  bool lastIsOperator(String s);
+
+// read the operator from the begining of calculation strings
   @protected
-  Operator readOperator(String s);
+  Operator readFirstOperator(String s);
+
+// read the operator from the end of calculation strings
+  Operator readLastOperator(String s);
 
 // read the next operand from calculation string
   @protected
-  Operand<T> readOperand(String s);
+  Operand<T> readFirstOperand(String s);
+
+  Operand<T> readLastOperand(String s);
 
 // computing equation for the given operator with correspond operands
   @protected
@@ -86,6 +96,10 @@ abstract class Calculate<T> {
   @protected
   PCompare compare(Operator op1, Operator op2);
 
+  String formatResult(T result) {
+    return result.toString();
+  }
+
   /// get result of given calculation string
   ///
   /// @s the calculation string
@@ -98,9 +112,9 @@ abstract class Calculate<T> {
     // parse calculation string until reach the end.
     while (_operators.last.name != BOUNDARY_SIGN || s[0] != BOUNDARY_SIGN) {
       // when the first elements in calculation string is operator
-      if (isOperator(s)) {
+      if (firstIsOperator(s)) {
         // read the first operator from calculation string
-        final op = readOperator(s);
+        final op = readFirstOperator(s);
 
         switch (compare(_operators.last, op)) {
           // if the operator which read from calculation string is prior
@@ -135,12 +149,17 @@ abstract class Calculate<T> {
         }
       } else {
         // if the first elements of calculation string is operand, read first operand
-        final operand = readOperand(s);
+        final operand = readFirstOperand(s);
         // update calculation string
         s = s.substring(operand.length);
         // push the operand read from calculation string to the operands stack
         _operands.addLast(operand.operand);
       }
+    }
+
+    if (_operands.length != 1) {
+      _clear();
+      throw CalculationInputError(null, null);
     }
 
     //now the result of calculation string is the top operand in the operands stack.
@@ -153,4 +172,21 @@ abstract class Calculate<T> {
     _operators.clear();
     _operands.clear();
   }
+}
+
+// the function that generate regular expression to match operator in the begining of calculation string
+String genOpRegx(List<String> operators) {
+  var regx = '(';
+  operators.asMap().forEach((i, o) {
+    if (o.length > 1) {
+      regx += "($o)";
+    } else if (o.length == 1) {
+      regx += (r'\' + o);
+    }
+    if (i < operators.length - 1) {
+      regx += '|';
+    }
+  });
+  regx += ')';
+  return regx;
 }
