@@ -4,25 +4,7 @@ import 'package:calculator/algorithm/calculator.dart';
 import 'package:flutter/foundation.dart';
 import '../signs.dart';
 
-class OperandsError<T> implements Exception {
-  final Operator _op;
-  final List<T> _operands;
-  OperandsError(this._op, this._operands);
-
-  @override
-  String toString() {
-    if (_op.level != _operands.length) {
-      return "operator ${_op.name} need ${_op.level} operands, but find ${_operands.length}";
-    }
-    return "operator ${_op.name} have some thing wrong with operands ${_operands.toString()}";
-  }
-}
-
 class ScienceCalculator extends Calculator<double> {
-  ScienceCalculator() {
-    print('Lee ScienceCalculator constructor called!');
-  }
-
   final _numberPattern = r'(([0-9]+(\.[0-9]+)?)|π|e)';
   static final _operatorPattern = genOpRegx([
     PLUS_SIGN,
@@ -130,13 +112,6 @@ class ScienceCalculator extends Calculator<double> {
     return _readOperand(matched);
   }
 
-  @override
-  Operand<double> readLastOperand(String s) {
-    final numberRegExp = RegExp(_numberPattern + r'$');
-    final matched = numberRegExp.firstMatch(s).group(0);
-    return _readOperand(matched);
-  }
-
   Operator _readOperator(String op) {
     var operandsNum = 0;
     switch (op) {
@@ -169,13 +144,6 @@ class ScienceCalculator extends Calculator<double> {
   @protected
   Operator readFirstOperator(String s) {
     final operatorRegExp = RegExp("^$_operatorPattern");
-    final op = operatorRegExp.firstMatch(s).group(0);
-    return _readOperator(op);
-  }
-
-  @override
-  Operator readLastOperator(String s) {
-    final operatorRegExp = RegExp(_operatorPattern + r'$');
     final op = operatorRegExp.firstMatch(s).group(0);
     return _readOperator(op);
   }

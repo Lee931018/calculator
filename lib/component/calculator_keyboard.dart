@@ -8,11 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class CalculatorKeyboard extends StatelessWidget {
-  final List<CalculatorButtonDelegator> btnDelegators;
+  final List<CalculatorButtonDelegator> delegators;
   final Calculator calculator;
   final int rowNum;
+  final double ratio;
 
-  CalculatorKeyboard(this.btnDelegators, this.calculator, this.rowNum);
+  CalculatorKeyboard(
+      {this.delegators, this.calculator, this.rowNum, this.ratio = 1});
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +24,10 @@ class CalculatorKeyboard extends StatelessWidget {
           CalculatorBoard(),
           GridView.count(
             primary: false,
-            childAspectRatio: 1.2,
+            childAspectRatio: ratio,
             crossAxisCount: this.rowNum,
             shrinkWrap: true,
-            children: btnDelegators
+            children: delegators
                 .map((delegator) => Provider<Calculator>.value(
                     value: calculator, child: CalculatorButton(delegator)))
                 .toList(),

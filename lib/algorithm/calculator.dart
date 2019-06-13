@@ -32,6 +32,20 @@ class CalculationInputError implements Exception {
   }
 }
 
+class OperandsError<T> implements Exception {
+  final Operator _op;
+  final List<T> _operands;
+  OperandsError(this._op, this._operands);
+
+  @override
+  String toString() {
+    if (_op.level != _operands.length) {
+      return "operator ${_op.name} need ${_op.level} operands, but find ${_operands.length}";
+    }
+    return "operator ${_op.name} have some thing wrong with operands ${_operands.toString()}";
+  }
+}
+
 enum PCompare { prior, less, equal, error }
 
 class Operator {
@@ -73,14 +87,9 @@ abstract class Calculator<T> {
   @protected
   Operator readFirstOperator(String s);
 
-// read the operator from the end of calculation strings
-  Operator readLastOperator(String s);
-
 // read the next operand from calculation string
   @protected
   Operand<T> readFirstOperand(String s);
-
-  Operand<T> readLastOperand(String s);
 
 // computing equation for the given operator with correspond operands
   @protected

@@ -1,4 +1,4 @@
-import 'package:calculator/pages/logical_calculator.dart';
+import 'package:calculator/pages/bitwise_calculator.dart';
 import 'package:flutter/material.dart';
 import 'pages/science_calculator.dart';
 
@@ -25,14 +25,14 @@ class CalculatorMainPage extends StatefulWidget {
   _CalculatorMainPageState createState() => _CalculatorMainPageState();
 }
 
-enum Calculators { scientific, logical }
+enum Calculators { scientific, bitwise }
 
 class _CalculatorMainPageState extends State<CalculatorMainPage> {
   var _selected = Calculators.scientific;
   final _tabTextStyle = TextStyle(fontSize: 17);
   final _controller = PageController();
   final _scientificCalculatorView = ScienceCalculatorView();
-  final _logicalCalculatorView = LogicalCalculatorView();
+  final _bitwiseCalculatorView = BitwiseCalculatorView();
 
   _selectTab(Calculators type) {
     if (_selected == type) return;
@@ -49,7 +49,7 @@ class _CalculatorMainPageState extends State<CalculatorMainPage> {
       if (_controller.page == 0) {
         _selectTab(Calculators.scientific);
       } else if (_controller.page == 1) {
-        _selectTab(Calculators.logical);
+        _selectTab(Calculators.bitwise);
       }
     });
   }
@@ -57,13 +57,13 @@ class _CalculatorMainPageState extends State<CalculatorMainPage> {
   @override
   Widget build(BuildContext context) {
     var scientificTextColor;
-    var logicalTextColor;
+    var bitwiseTextColor;
     if (_selected == Calculators.scientific) {
       scientificTextColor = Theme.of(context).accentColor;
-      logicalTextColor = Colors.white;
+      bitwiseTextColor = Colors.white;
     } else {
       scientificTextColor = Colors.white;
-      logicalTextColor = Theme.of(context).accentColor;
+      bitwiseTextColor = Theme.of(context).accentColor;
     }
     return Scaffold(
         appBar: AppBar(
@@ -85,11 +85,11 @@ class _CalculatorMainPageState extends State<CalculatorMainPage> {
                 FlatButton(
                   highlightColor: Colors.white30,
                   child: Text(
-                    'Logical',
-                    style: _tabTextStyle.copyWith(color: logicalTextColor),
+                    'Bitwise',
+                    style: _tabTextStyle.copyWith(color: bitwiseTextColor),
                   ),
                   onPressed: () {
-                    _selectTab(Calculators.logical);
+                    _selectTab(Calculators.bitwise);
                     _controller.jumpToPage(1);
                   },
                 )
@@ -105,7 +105,7 @@ class _CalculatorMainPageState extends State<CalculatorMainPage> {
         ),
         body: PageView(
           controller: _controller,
-          children: <Widget>[_scientificCalculatorView, _logicalCalculatorView],
+          children: <Widget>[_scientificCalculatorView, _bitwiseCalculatorView],
         ));
   }
 }
