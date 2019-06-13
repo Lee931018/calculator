@@ -6,9 +6,11 @@ import 'package:calculator/signs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:calculator/main.dart';
+import 'package:calculator/state.dart';
 
 class ScienceCalculatorView extends StatelessWidget {
-  final _state = CalculationState();
+  final _state = CalculationState(Calculators.scientific);
   final _calculator = ScienceCalculator();
 
   _unaryOpValidate(Calculator c, CalculationState s) {

@@ -1,19 +1,27 @@
+import 'package:calculator/model/db.dart';
 import 'package:calculator/pages/bitwise_calculator.dart';
+import 'package:calculator/pages/histories.dart';
 import 'package:flutter/material.dart';
 import 'pages/science_calculator.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+  MyApp() {
+    connectDb();
+  }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'Calculator',
         theme: ThemeData(
-            primaryColor: Color(0xFF414449),
-            primaryColorDark: Color(0xFF242532),
-            accentColor: Color(0xFFD20024)),
+          primaryColor: Color(0xFF414449),
+          primaryColorDark: Color(0xFF242532),
+          accentColor: Color(0xFFD20024),
+          scaffoldBackgroundColor: Color(0xFF242532),
+        ),
         home: CalculatorMainPage());
   }
 }
@@ -54,6 +62,11 @@ class _CalculatorMainPageState extends State<CalculatorMainPage> {
     });
   }
 
+  _gotoHistory(BuildContext context) {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => Histories(_selected)));
+  }
+
   @override
   Widget build(BuildContext context) {
     var scientificTextColor;
@@ -67,6 +80,7 @@ class _CalculatorMainPageState extends State<CalculatorMainPage> {
     }
     return Scaffold(
         appBar: AppBar(
+          elevation: 0,
           flexibleSpace: SafeArea(
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -99,7 +113,7 @@ class _CalculatorMainPageState extends State<CalculatorMainPage> {
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.history),
-              onPressed: () {},
+              onPressed: () => _gotoHistory(context),
             )
           ],
         ),

@@ -77,18 +77,15 @@ abstract class Calculator<T> {
   }
 
 // return if the first element in calculation string is operator
-  @protected
   bool firstIsOperator(String s);
 
 // return if s is operator
   bool lastIsOperator(String s);
 
 // read the operator from the begining of calculation strings
-  @protected
   Operator readFirstOperator(String s);
 
 // read the next operand from calculation string
-  @protected
   Operand<T> readFirstOperand(String s);
 
 // computing equation for the given operator with correspond operands

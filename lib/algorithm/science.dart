@@ -72,7 +72,6 @@ class ScienceCalculator extends Calculator<double> {
   }
 
   @override
-  @protected
   bool firstIsOperator(String s) {
     final numberRegExp = RegExp("^-?$_numberPattern");
     return !numberRegExp.hasMatch(s);
@@ -105,7 +104,6 @@ class ScienceCalculator extends Calculator<double> {
   }
 
   @override
-  @protected
   Operand<double> readFirstOperand(String s) {
     final numberRegExp = RegExp("^-?$_numberPattern");
     final matched = numberRegExp.firstMatch(s).group(0);
@@ -141,7 +139,6 @@ class ScienceCalculator extends Calculator<double> {
   }
 
   @override
-  @protected
   Operator readFirstOperator(String s) {
     final operatorRegExp = RegExp("^$_operatorPattern");
     final op = operatorRegExp.firstMatch(s).group(0);

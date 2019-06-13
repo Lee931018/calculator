@@ -1,8 +1,8 @@
 import 'package:calculator/algorithm/calculator.dart';
-import 'package:calculator/component/calculator_keyboard.dart';
 import 'package:calculator/signs.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:calculator/state.dart';
 
 class CalculatorButtonStyle {
   final Color fontColor;

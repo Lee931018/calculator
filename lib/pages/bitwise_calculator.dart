@@ -1,16 +1,17 @@
 import 'package:calculator/algorithm/bitwise.dart';
 import 'package:calculator/algorithm/calculator.dart';
-import 'package:calculator/algorithm/science.dart';
 import 'package:calculator/component/calculator_button.dart';
 import 'package:calculator/component/calculator_keyboard.dart';
 import 'package:calculator/signs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:calculator/main.dart';
+import 'package:calculator/state.dart';
 
 class BitwiseCalculatorView extends StatelessWidget {
   final _calculator = BitwiseCalculator();
-  final _state = CalculationState();
+  final _state = CalculationState(Calculators.bitwise);
 
   _unaryOpValidate(Calculator c, CalculationState s) {
     final isEmpty = s.calculationStr == '';
@@ -144,7 +145,7 @@ class BitwiseCalculatorView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<CalculationState>.value(
-        notifier: CalculationState(),
+        notifier: _state,
         child: CalculatorKeyboard(
           delegators: _buildDelegators(context),
           calculator: _calculator,
