@@ -19,6 +19,10 @@ class OperandsError<T> implements Exception {
 }
 
 class ScienceCalculator extends Calculator<double> {
+  ScienceCalculator() {
+    print('Lee ScienceCalculator constructor called!');
+  }
+
   final _numberPattern = r'(([0-9]+(\.[0-9]+)?)|π|e)';
   static final _operatorPattern = genOpRegx([
     PLUS_SIGN,

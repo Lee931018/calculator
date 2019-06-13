@@ -8,6 +8,12 @@ import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
 class ScienceCalculatorView extends StatelessWidget {
+  ScienceCalculatorView() {
+    print('Lee ScienceCalculatorView constructor called!');
+  }
+
+  final _state = CalculationState();
+
   final _calculator = ScienceCalculator();
 
   _unaryOpValidate(Calculator c, CalculationState s) {
@@ -222,8 +228,9 @@ class ScienceCalculatorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('Lee ScienceCalculatorView build called!');
     return ChangeNotifierProvider<CalculationState>.value(
-        notifier: CalculationState(),
+        notifier: _state,
         child: CalculatorKeyboard(_buildDelegators(context), _calculator, 5));
   }
 }

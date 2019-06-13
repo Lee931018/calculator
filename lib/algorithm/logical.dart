@@ -1,6 +1,7 @@
 import 'package:calculator/algorithm/calculator.dart';
 
 class LogicalCalculator extends Calculator {
+  
   @override
   PCompare compare(Operator op1, Operator op2) {
     return null;
